@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" type="text/css" href="main.css">
+    <title>Ship Date</title>
+</head>
+
+<body>
+
+    <div class="container">
+        <h1>Today's date: <span></span></h1>
+
+        <div id="shipping">Shipping Date:<span></span></div>
+        <div id="isDst">DST: <span></span></div>
+    </div>
+    <script>
+        var ShippingDate;
+        Date.prototype.stdTimezoneOffset = function () {
+            var jan = new Date(this.getFullYear(), 0, 1);
+            var jul = new Date(this.getFullYear(), 6, 1);
+            return Math.max(jan.getTimezoneOffset(), jul.getTimezoneOffset());
+        }
+
+        Date.prototype.dst = function () {
+            return this.getTimezoneOffset() < this.stdTimezoneOffset();
+        }
+
+        var UTCTime;
+        // PUT YOU DYNAMIC VALUES
+        var Action = '2018-11-06T17:26:882Z';
+        var today = new Date();
+        document.querySelector(".container h1 span").innerHTML = today.toString();
+        if (today.dst()) {
+            UTCTime = today.getUTCHours() + 2;
+            document.querySelector("#isDst span").innerHTML = 'Summer Time';  
+        } else {
+            UTCTime = today.getUTCHours() + 1;
+            document.querySelector("#isDst span").innerHTML = 'Winter Time';  
+        }
+
+        var dd = today.getDate();
+        var mm = today.getMonth() + 1;
+        var yyyy = today.getFullYear();
+        var hours = today.getHours();
+        var minutes = today.getMinutes();
+        var milisec = today.getMilliseconds();
+        var dayWeek = today.getDay();
+
+        if (dd < 10) {
+            dd = '0' + dd
+        }
+
+        if (mm < 10) {
+            mm = '0' + mm
+        }
+        if (minutes < 10) {
+            minutes = '0' + minutes
+        }
+        if (UTCTime < 10) {
+            UTCTime = '0' + UTCTime
+        }
+
+        today = yyyy + '-' + mm + '-' + dd + 'T' + UTCTime + ':' + minutes + ':' + milisec + 'Z';
+        var yy = yyyy.toString().substring(2, 4);
+
+
+        if (parseInt(UTCTime) <= 12 && parseInt(minutes) <= 59) {
+            ShippingDate = mm + '/' + parseInt(dd) + '/' + yy;
+        } else if (Action > today && dayWeek < 5 && parseInt(UTCTime) >= 13) {
+            ShippingDate = mm + '/' + (parseInt(dd) + 1) + '/' + yy;
+        } else if (Action > today && dayWeek == 5 && dayWeek != 0 && parseInt(UTCTime) >= 13) {
+            ShippingDate = mm + '/' + (parseInt(dd) + 3) + '/' + yy;
+        } else if (dayWeek == 6) {
+            ShippingDate = mm + '/' + (parseInt(dd) + 2) + '/' + yy;
+        } else if (dayWeek == 0) {
+            ShippingDate = mm + '/' + (parseInt(dd) + 1) + '/' + yy;
+        } else {
+            console.log("Something wrong!");
+        }
+        document.querySelector("#shipping span").innerHTML = ShippingDate;  
+        console.log(ShippingDate);
+    </script>
+</body>
+
+</html>
